@@ -5,6 +5,7 @@
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
+    "start": "pnpm run build && node dist/index.cjs",
     "build": "vite build",
     "watch": "vite build --watch",
     "test": "vitest run"
