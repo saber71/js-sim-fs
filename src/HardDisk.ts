@@ -3,13 +3,6 @@ import fsPromise from "node:fs/promises"
 
 export namespace HardDisk {
   export abstract class Base {
-    constructor(
-      // 一条MFT记录的大小，单位：字节
-      readonly mtfSize: number,
-      // MFT记录的数量上限
-      readonly mtfMaxCount: number
-    ) {}
-
     // 执行硬盘初始化操作
     abstract init(): Promise<void>
 
@@ -33,11 +26,9 @@ export namespace HardDisk {
 
     constructor(
       // 硬盘容量，单位：字节
-      readonly capacity: number,
-      mtfSize: number,
-      mtfMaxCount: number
+      readonly capacity: number
     ) {
-      super(mtfSize, mtfMaxCount)
+      super()
       this._data = Buffer.alloc(capacity)
     }
 
@@ -64,11 +55,9 @@ export namespace HardDisk {
       // 存储硬盘数据的文件路径
       readonly path: string,
       // 硬盘容量，单位：字节。如果不指定，则使用文件大小作为容量。如果文件不存在，则抛出异常。
-      readonly capacity: number = 0,
-      mtfSize: number,
-      mtfMaxCount: number
+      readonly capacity: number = 0
     ) {
-      super(mtfSize, mtfMaxCount)
+      super()
     }
 
     async init(): Promise<void> {
