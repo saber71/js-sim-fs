@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import fsPromise from "node:fs/promises";
+import { BufferReader } from "./BufferReader.ts";
 
 export namespace HardDisk {
   export abstract class Base {
@@ -13,17 +14,17 @@ export namespace HardDisk {
 
     /**
      * 从硬盘中读取数据
-     * @param startPosition 开始读取的位置
+     * @param offset 开始读取的位置
      * @param length 要读取的长度
      */
-    abstract read(startPosition: number, length: number): Promise<Buffer>;
+    abstract read(offset: number, length: number): Promise<Buffer>;
 
     /**
      * 写入数据到硬盘中
      * @param data 要写入的数据
-     * @param writeInPosition 写入到硬盘中的位置
+     * @param writeInOffset 写入到硬盘中的位置
      */
-    abstract write(data: Buffer, writeInPosition: number): Promise<void>;
+    abstract write(data: Buffer, writeInOffset: number): Promise<void>;
   }
 
   export class Memory extends Base {
@@ -38,14 +39,12 @@ export namespace HardDisk {
       return Promise.resolve();
     }
 
-    read(startPosition: number, length: number): Promise<Buffer> {
-      const result = Buffer.alloc(length);
-      this._data.copy(result, 0, startPosition, startPosition + length);
-      return Promise.resolve(result);
+    read(offset: number, length: number): Promise<Buffer> {
+      return Promise.resolve(BufferReader.slice(this._data, offset, length));
     }
 
-    write(data: Buffer, writeInPosition: number): Promise<void> {
-      data.copy(this._data, writeInPosition, 0, data.length);
+    write(data: Buffer, writeInOffset: number): Promise<void> {
+      data.copy(this._data, writeInOffset, 0, data.length);
       return Promise.resolve();
     }
   }
@@ -78,14 +77,14 @@ export namespace HardDisk {
       return;
     }
 
-    async read(startPosition: number, length: number): Promise<Buffer> {
+    async read(offset: number, length: number): Promise<Buffer> {
       const buffer = Buffer.alloc(length);
-      await this._handler.read(buffer, 0, length, startPosition);
+      await this._handler.read(buffer, 0, length, offset);
       return buffer;
     }
 
-    async write(data: Buffer, writeInPosition: number): Promise<void> {
-      await this._handler.write(data, 0, data.length, writeInPosition);
+    async write(data: Buffer, writeInOffset: number): Promise<void> {
+      await this._handler.write(data, 0, data.length, writeInOffset);
     }
   }
 }
