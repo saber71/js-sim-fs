@@ -4,22 +4,14 @@ import fsPromise from 'node:fs/promises';
 var HardDisk;
 (function(HardDisk) {
     let Base = class Base {
-        mtfSize;
-        mtfMaxCount;
-        constructor(// 一条MFT记录的大小，单位：字节
-        mtfSize, // MFT记录的数量上限
-        mtfMaxCount){
-            this.mtfSize = mtfSize;
-            this.mtfMaxCount = mtfMaxCount;
-        }
     };
     HardDisk.Base = Base;
     let Memory = class Memory extends Base {
         capacity;
         _data;
         constructor(// 硬盘容量，单位：字节
-        capacity, mtfSize, mtfMaxCount){
-            super(mtfSize, mtfMaxCount);
+        capacity){
+            super();
             this.capacity = capacity;
             this._data = Buffer.alloc(capacity);
         }
@@ -43,8 +35,8 @@ var HardDisk;
         _handler;
         constructor(// 存储硬盘数据的文件路径
         path, // 硬盘容量，单位：字节。如果不指定，则使用文件大小作为容量。如果文件不存在，则抛出异常。
-        capacity = 0, mtfSize, mtfMaxCount){
-            super(mtfSize, mtfMaxCount);
+        capacity = 0){
+            super();
             this.path = path;
             this.capacity = capacity;
         }
@@ -74,4 +66,26 @@ var HardDisk;
     HardDisk.File = File;
 })(HardDisk || (HardDisk = {}));
 
-export { HardDisk };
+var HardDiskController;
+(function(HardDiskController) {
+    let Base = class Base {
+        hardDisk;
+        constructor(hardDisk){
+            this.hardDisk = hardDisk;
+        }
+    };
+    HardDiskController.Base = Base;
+    let Default = class Default extends Base {
+        async init() {
+            await this.hardDisk.init();
+        }
+    };
+    HardDiskController.Default = Default;
+    HardDiskController.dataMeta = {
+        totalBytes: 1024,
+        customBytes: 0,
+        clusterBytes: 1024 * 4
+    };
+})(HardDiskController || (HardDiskController = {}));
+
+export { HardDisk, HardDiskController };

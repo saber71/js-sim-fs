@@ -1,8 +1,5 @@
 export declare namespace HardDisk {
     export abstract class Base {
-        readonly mtfSize: number;
-        readonly mtfMaxCount: number;
-        constructor(mtfSize: number, mtfMaxCount: number);
         abstract init(): Promise<void>;
         /**
          * 从硬盘中读取数据
@@ -20,7 +17,7 @@ export declare namespace HardDisk {
     export class Memory extends Base {
         readonly capacity: number;
         private readonly _data;
-        constructor(capacity: number, mtfSize: number, mtfMaxCount: number);
+        constructor(capacity: number);
         init(): Promise<void>;
         read(startPosition: number, length: number): Promise<Buffer>;
         write(data: Buffer, writeInPosition: number): Promise<void>;
@@ -29,10 +26,27 @@ export declare namespace HardDisk {
         readonly path: string;
         readonly capacity: number;
         private readonly _handler;
-        constructor(path: string, capacity: number | undefined, mtfSize: number, mtfMaxCount: number);
+        constructor(path: string, capacity?: number);
         init(): Promise<void>;
         read(startPosition: number, length: number): Promise<Buffer>;
         write(data: Buffer, writeInPosition: number): Promise<void>;
+    }
+}
+
+export declare namespace HardDiskController {
+    export abstract class Base {
+        readonly hardDisk: HardDisk.Base;
+        constructor(hardDisk: HardDisk.Base);
+        abstract init(): Promise<void>;
+    }
+    export class Default extends Base {
+        init(): Promise<void>;
+    }
+    const dataMeta: DataMeta;
+    export interface DataMeta {
+        totalBytes: number;
+        customBytes: number;
+        clusterBytes: number;
     }
 }
 
