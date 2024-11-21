@@ -10,11 +10,11 @@ importers:
     dependencies:
       '@heraclius/js-tools':
         specifier: github:saber71/js-tools
-        version: https://codeload.github.com/saber71/js-tools/tar.gz/ed4474364588a618e9caacb447bee698d260cf62
+        version: git+https://git@github.com:saber71/js-tools.git#4fc5701480a14f3b8a8861e31c48ffe269356104
     devDependencies:
       '@heraclius/external-deps-plugin':
         specifier: github:saber71/vite-external-deps-plugin
-        version: https://codeload.github.com/saber71/vite-external-deps-plugin/tar.gz/cf680f754664f97000ef7bab4967ab203bb5aa57(vite@5.4.11(@types/node@22.9.1))
+        version: git+https://git@github.com:saber71/vite-external-deps-plugin.git#44099552a05560476a83d6358441ff53b1906c44(vite@5.4.11(@types/node@22.9.1))
       '@types/node':
         specifier: ^22.9.1
         version: 22.9.1
@@ -188,14 +188,14 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@heraclius/external-deps-plugin@https://codeload.github.com/saber71/vite-external-deps-plugin/tar.gz/cf680f754664f97000ef7bab4967ab203bb5aa57':
-    resolution: {tarball: https://codeload.github.com/saber71/vite-external-deps-plugin/tar.gz/cf680f754664f97000ef7bab4967ab203bb5aa57}
+  '@heraclius/external-deps-plugin@git+https://git@github.com:saber71/vite-external-deps-plugin.git#44099552a05560476a83d6358441ff53b1906c44':
+    resolution: {commit: 44099552a05560476a83d6358441ff53b1906c44, repo: git@github.com:saber71/vite-external-deps-plugin.git, type: git}
     version: 1.1.0
     peerDependencies:
       vite: ^5.3.3
 
-  '@heraclius/js-tools@https://codeload.github.com/saber71/js-tools/tar.gz/ed4474364588a618e9caacb447bee698d260cf62':
-    resolution: {tarball: https://codeload.github.com/saber71/js-tools/tar.gz/ed4474364588a618e9caacb447bee698d260cf62}
+  '@heraclius/js-tools@git+https://git@github.com:saber71/js-tools.git#4fc5701480a14f3b8a8861e31c48ffe269356104':
+    resolution: {commit: 4fc5701480a14f3b8a8861e31c48ffe269356104, repo: git@github.com:saber71/js-tools.git, type: git}
     version: 1.1.0
 
   '@jridgewell/sourcemap-codec@1.5.0':
@@ -407,8 +407,8 @@ packages:
   '@swc/counter@0.1.3':
     resolution: {integrity: sha512-e2BR4lsJkkRlKZ/qCHPw9ZaSxc0MVUd7gtbtaB7aMvHeJVYe8sOB8DBZkP2DtISHGSku9sCK6T6cnY0CtXrOCQ==}
 
-  '@swc/types@0.1.16':
-    resolution: {integrity: sha512-okcPxwxfdKUPrH15TbMcuqMJBu6QcxjHwyhYj1IPyaSAKHY7SHqhaS2UCANaOQ/+E6Dor50IgNpSbeJNqcuehw==}
+  '@swc/types@0.1.17':
+    resolution: {integrity: sha512-V5gRru+aD8YVyCOMAjMpWR1Ui577DD5KSJsHP8RAxopAH22jFz6GZd/qxqjO6MJHQhcsjvjOFXyDhyLQUnMveQ==}
 
   '@types/argparse@1.0.38':
     resolution: {integrity: sha512-ebDJ9b0e702Yr7pWgB0jzm+CX4Srzz8RcXtLJDJB+BSccqMa36uyH/zUsSYao5+BD1ytv3k3rPYCq4mAE1hsXA==}
@@ -978,11 +978,11 @@ snapshots:
   '@esbuild/win32-x64@0.21.5':
     optional: true
 
-  '@heraclius/external-deps-plugin@https://codeload.github.com/saber71/vite-external-deps-plugin/tar.gz/cf680f754664f97000ef7bab4967ab203bb5aa57(vite@5.4.11(@types/node@22.9.1))':
+  '@heraclius/external-deps-plugin@git+https://git@github.com:saber71/vite-external-deps-plugin.git#44099552a05560476a83d6358441ff53b1906c44(vite@5.4.11(@types/node@22.9.1))':
     dependencies:
       vite: 5.4.11(@types/node@22.9.1)
 
-  '@heraclius/js-tools@https://codeload.github.com/saber71/js-tools/tar.gz/ed4474364588a618e9caacb447bee698d260cf62': {}
+  '@heraclius/js-tools@git+https://git@github.com:saber71/js-tools.git#4fc5701480a14f3b8a8861e31c48ffe269356104': {}
 
   '@jridgewell/sourcemap-codec@1.5.0': {}
 
@@ -1150,7 +1150,7 @@ snapshots:
   '@swc/core@1.6.13':
     dependencies:
       '@swc/counter': 0.1.3
-      '@swc/types': 0.1.16
+      '@swc/types': 0.1.17
     optionalDependencies:
       '@swc/core-darwin-arm64': 1.6.13
       '@swc/core-darwin-x64': 1.6.13
@@ -1165,7 +1165,7 @@ snapshots:
 
   '@swc/counter@0.1.3': {}
 
-  '@swc/types@0.1.16':
+  '@swc/types@0.1.17':
     dependencies:
       '@swc/counter': 0.1.3
 
