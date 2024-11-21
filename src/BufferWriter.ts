@@ -3,6 +3,7 @@ import { BufferReader } from "./BufferReader.ts";
 export class BufferWriter extends BufferReader {
   writeBit(bool: boolean | number, bit: number, offset: number) {
     if (bit < 0 || bit > 7) throw new Error("bit out of range");
+    bit = 7 - bit;
     const bitValue = bool ? 1 : 0;
     const oldValue = this.readUint8(offset);
     const newValue = bitValue ? oldValue | (1 << bit) : oldValue & ~(1 << bit);
