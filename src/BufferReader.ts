@@ -43,8 +43,10 @@ export class BufferReader {
     return BufferReader.slice(this._data, this._start + offset, length);
   }
 
+  // 读取指定偏移量处的指定位数的二进制位，注意是从高位往低位读取
   readBit(offset: number, bit: number) {
     if (bit < 0 || bit > 7) throw new Error("bit out of range");
+    bit = 7 - bit;
     const byte = this.readUint8(offset);
     const mask = 1 << bit;
     return (byte & mask) > 0 ? 1 : 0;

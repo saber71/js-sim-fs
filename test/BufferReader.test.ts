@@ -14,12 +14,12 @@ describe("BufferReader", () => {
     const buffer = Buffer.from([0b10101010]);
     const reader = new BufferReader(buffer, 0);
 
-    expect(reader.readBit(0, 0)).toBe(0);
-    expect(reader.readBit(0, 1)).toBe(1);
-    expect(reader.readBit(0, 2)).toBe(0);
-    expect(reader.readBit(0, 3)).toBe(1);
-    expect(reader.readBit(0, 4)).toBe(0);
-    expect(reader.readBit(0, 5)).toBe(1);
+    expect(reader.readBit(0, 0)).toBe(1);
+    expect(reader.readBit(0, 1)).toBe(0);
+    expect(reader.readBit(0, 2)).toBe(1);
+    expect(reader.readBit(0, 3)).toBe(0);
+    expect(reader.readBit(0, 4)).toBe(1);
+    expect(reader.readBit(0, 5)).toBe(0);
   });
 
   // Add more tests for other read methods ...

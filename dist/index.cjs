@@ -1,6 +1,10 @@
-import fs from 'node:fs';
-import fsPromise from 'node:fs/promises';
-import { Lazy } from '@heraclius/js-tools';
+'use strict';
+
+Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+
+const fs = require('node:fs');
+const fsPromise = require('node:fs/promises');
+const jsTools = require('@heraclius/js-tools');
 
 class BufferReader {
     _data;
@@ -86,7 +90,7 @@ class BufferReader {
     }
 }
 
-var HardDisk;
+exports.HardDisk = void 0;
 (function(HardDisk) {
     let Base = class Base {
         capacity;
@@ -147,9 +151,9 @@ var HardDisk;
         }
     };
     HardDisk.File = File;
-})(HardDisk || (HardDisk = {}));
+})(exports.HardDisk || (exports.HardDisk = {}));
 
-var HardDiskController;
+exports.HardDiskController = void 0;
 (function(HardDiskController) {
     // 默认配置
     HardDiskController.option = {
@@ -160,7 +164,7 @@ var HardDiskController;
         clusterBytes: 1024 * 4
     };
     // 数据簇中记录终止位置的字节数
-    new Lazy(()=>{
+    new jsTools.Lazy(()=>{
         if (HardDiskController.option.clusterBytes <= 2 ** 8) return 1;
         if (HardDiskController.option.clusterBytes <= 2 ** 16) return 2;
         if (HardDiskController.option.clusterBytes <= 2 ** 32) return 4;
@@ -183,7 +187,7 @@ var HardDiskController;
         }
     };
     HardDiskController.Default = Default;
-})(HardDiskController || (HardDiskController = {}));
+})(exports.HardDiskController || (exports.HardDiskController = {}));
 
 class BufferWriter extends BufferReader {
     writeBit(bool, bit, offset) {
@@ -235,13 +239,14 @@ class BufferWriter extends BufferReader {
     }
 }
 
-var SimFileSystem;
+exports.SimFileSystem = void 0;
 (function(SimFileSystem) {
     SimFileSystem.fileMetaOptions = {
         customDataBytes: 20,
         nameBytes: 255,
         totalBytes: 1024
     };
-})(SimFileSystem || (SimFileSystem = {}));
+})(exports.SimFileSystem || (exports.SimFileSystem = {}));
 
-export { BufferReader, BufferWriter, HardDisk, HardDiskController, SimFileSystem };
+exports.BufferReader = BufferReader;
+exports.BufferWriter = BufferWriter;
