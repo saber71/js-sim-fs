@@ -1,6 +1,17 @@
 import { BufferReader } from "./BufferReader.ts";
 
 export class BufferWriter extends BufferReader {
+  write(
+    data: Buffer,
+    offset: number,
+    start: number = 0,
+    length: number = data.length,
+  ) {
+    if (this._start + offset + length > this._end)
+      throw new Error("offset out of buffer range");
+    data.copy(this._data, this._start + offset, start, length);
+  }
+
   writeBit(bool: boolean | number, bit: number, offset: number) {
     if (bit < 0 || bit > 7) throw new Error("bit out of range");
     bit = 7 - bit;
