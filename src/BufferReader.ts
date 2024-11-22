@@ -1,3 +1,5 @@
+import type { DataType } from "./types.ts";
+
 export class BufferReader {
   constructor(
     protected readonly _data: Buffer,
@@ -20,7 +22,7 @@ export class BufferReader {
   }
 
   getData() {
-    return this.slice();
+    return this.slice()._data;
   }
 
   /**
@@ -102,13 +104,23 @@ export class BufferReader {
     return this._data.readBigUInt64BE(offset);
   }
 
+  read(type: DataType, offset: number) {
+    if (type === "uint8") return this.readUint8(offset);
+    else if (type === "int8") return this.readInt8(offset);
+    else if (type === "int16") return this.readInt16(offset);
+    else if (type === "uint16") return this.readUint16(offset);
+    else if (type === "int32") return this.readInt32(offset);
+    else if (type === "uint32") return this.readUint32(offset);
+    else if (type === "uint64") return this.readUint64(offset);
+    else if (type === "int64") return this.readInt64(offset);
+    throw new Error("Invalid type " + type);
+  }
+
   toString(encoding: BufferEncoding = "utf-8") {
     return this._data.toString(encoding, this._start, this._end + 1);
   }
 
-  toNumberArray(
-    type: "uint8" | "int8" | "uint16" | "int16" | "uint32" | "int32",
-  ): Array<number> {
+  toNumberArray(type: DataType): Array<number> {
     const array = [];
     let methodName: string,
       offsetStep = 1;

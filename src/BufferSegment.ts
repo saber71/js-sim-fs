@@ -1,4 +1,5 @@
-import { type BufferWriter } from "./BufferWriter";
+import { BufferWriter } from "./BufferWriter";
+import { getDataType } from "./types.ts";
 
 export namespace BufferSegment {
   export abstract class Base<Value = number> {
@@ -134,31 +135,40 @@ export namespace BufferSegment {
     protected _writeValue(value: string): void {
       const strBuffer = Buffer.from(value);
       if (strBuffer.length > this.length) throw new Error("String too long");
-      this.buffer.write(strBuffer, this.offset);
+      this.buffer.putBuffer(strBuffer, this.offset);
     }
   }
 
-  export class StringWithUint8Length extends Base<string> {
+  export class StringWithLength extends Base<string> {
     constructor(
       buffer: BufferWriter,
       offset: number,
       readonly length: number,
+      readonly lengthByte: number,
     ) {
       super(buffer, offset);
     }
 
     protected _readValue(): string {
       const data = this.buffer.slice(this.offset, this.length);
-      const strLength = data.readUint8(data.length - 1);
-      return this.buffer.slice(this.offset, strLength).toString();
+      const strLength = data.read(
+        getDataType(this.lengthByte),
+        data.length - this.lengthByte,
+      );
+      return this.buffer.slice(this.offset, strLength as any).toString();
     }
 
     protected _writeValue(value: string): void {
-      const buffer = Buffer.alloc(this.length);
-      buffer.write(value);
-      buffer.writeUint8(Buffer.from(value).length, this.length - 1);
-      if (buffer.length > this.length) throw new Error("String too long");
-      this.buffer.write(buffer, this.offset);
+      const strBuffer = Buffer.from(value);
+      if (strBuffer.length > this.length) throw new Error("String too long");
+      const buffer = new BufferWriter(Buffer.alloc(this.length), 0);
+      buffer.putBuffer(strBuffer, 0);
+      buffer.write(
+        getDataType(this.lengthByte),
+        Buffer.from(value).length,
+        this.length - this.lengthByte,
+      );
+      this.buffer.putBuffer(buffer, this.offset);
     }
   }
 

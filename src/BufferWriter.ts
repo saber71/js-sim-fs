@@ -1,17 +1,7 @@
 import { BufferReader } from "./BufferReader.ts";
+import type { DataType } from "./types.ts";
 
 export class BufferWriter extends BufferReader {
-  write(
-    data: Buffer,
-    offset: number,
-    start: number = 0,
-    length: number = data.length,
-  ) {
-    if (this._start + offset + length > this._end)
-      throw new Error("offset out of buffer range");
-    data.copy(this._data, this._start + offset, start, length);
-  }
-
   writeBit(bool: boolean | number, bit: number, offset: number) {
     if (bit < 0 || bit > 7) throw new Error("bit out of range");
     bit = 7 - bit;
@@ -69,11 +59,19 @@ export class BufferWriter extends BufferReader {
     this._data.writeBigUInt64BE(value, offset);
   }
 
-  putArray(
-    array: number[],
-    type: "uint8" | "int8" | "uint16" | "int16" | "uint32" | "int32",
-    writeInStart: number = 0,
-  ) {
+  write(type: DataType, value: number | bigint, offset: number) {
+    if (type === "uint8") return this.writeUint8(value as any, offset);
+    else if (type === "int8") return this.writeInt8(value as any, offset);
+    else if (type === "int16") return this.writeInt16(value as any, offset);
+    else if (type === "uint16") return this.writeUint16(value as any, offset);
+    else if (type === "int32") return this.writeInt32(value as any, offset);
+    else if (type === "uint32") return this.writeUint32(value as any, offset);
+    else if (type === "uint64") return this.writeUint64(value as any, offset);
+    else if (type === "int64") return this.writeInt64(value as any, offset);
+    throw new Error("Invalid type " + type);
+  }
+
+  putArray(array: number[], type: DataType, writeInStart: number = 0) {
     let methodName = "",
       offsetStep = 1;
     switch (type) {
@@ -116,5 +114,17 @@ export class BufferWriter extends BufferReader {
     for (let i = 0; i < data.length; i++, writeInStart += 8) {
       (this as any)[methodName](data[i], writeInStart);
     }
+  }
+
+  putBuffer(
+    data: Buffer | BufferReader,
+    offset: number,
+    start: number = 0,
+    length: number = data.length,
+  ) {
+    if (this._start + offset + length > this._end)
+      throw new Error("offset out of buffer range");
+    if (data instanceof BufferReader) data = data.getData();
+    data.copy(this._data, this._start + offset, start, length);
   }
 }
