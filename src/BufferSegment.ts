@@ -161,4 +161,41 @@ export namespace BufferSegment {
       this.buffer.write(buffer, this.offset);
     }
   }
+
+  export class Bitmap extends Base<Array<number>> {
+    protected readonly _byteLength: number;
+
+    constructor(
+      buffer: BufferWriter,
+      offset: number,
+      readonly bitLength: number,
+    ) {
+      super(buffer, offset);
+      this._byteLength = Math.ceil(bitLength / 8);
+    }
+
+    getBit(offset: number) {
+      if (offset >= this.bitLength) throw new Error("offset out of range");
+      const byteOffset = Math.floor(offset / 8);
+      const bitOffset = offset % 8;
+      return this.buffer.readBit(this.offset + byteOffset, bitOffset);
+    }
+
+    setBit(offset: number, value: boolean | number) {
+      if (offset >= this.bitLength) throw new Error("offset out of range");
+      const byteOffset = Math.floor(offset / 8);
+      const bitOffset = offset % 8;
+      return this.buffer.writeBit(value, bitOffset, this.offset + byteOffset);
+    }
+
+    protected _readValue(): Array<number> {
+      return this.buffer
+        .slice(this.offset, this._byteLength)
+        .toNumberArray("uint8");
+    }
+
+    protected _writeValue(value: Array<number>): void {
+      this.buffer.putArray(value, "uint8", this.offset);
+    }
+  }
 }

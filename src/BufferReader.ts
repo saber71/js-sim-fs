@@ -34,13 +34,15 @@ export class BufferReader {
    * @returns 返回一个新的缓冲区读取器实例，该实例包含指定范围内的数据
    * @throws 如果指定的范围超出了当前缓冲区读取器的边界，则抛出错误
    */
-  slice(offset: number = 0, length: number = this.length) {
+  slice(offset: number = 0, length: number = this.length): this {
     // 检查指定的范围是否超出了当前缓冲区读取器的边界
     if (offset + length - 1 > this._end)
       throw new Error("length out of buffer range");
 
     // 调用BufferReader的slice方法，根据指定的范围从当前缓冲区读取器中切出一个新的缓冲区读取器
-    return BufferReader.slice(this._data, this._start + offset, length);
+    const data = BufferReader.slice(this._data, this._start + offset, length);
+    //@ts-ignore
+    return new this.constructor(data, 0, data.length - 1);
   }
 
   // 读取指定偏移量处的指定位数的二进制位，注意是从高位往低位读取
@@ -98,5 +100,56 @@ export class BufferReader {
     offset += this._start;
     if (offset + 7 > this._end) throw new Error("offset out of buffer range");
     return this._data.readBigUInt64BE(offset);
+  }
+
+  toString(encoding: BufferEncoding = "utf-8") {
+    return this._data.toString(encoding, this._start, this._end + 1);
+  }
+
+  toNumberArray(
+    type: "uint8" | "int8" | "uint16" | "int16" | "uint32" | "int32",
+  ): Array<number> {
+    const array = [];
+    let methodName: string,
+      offsetStep = 1;
+    switch (type) {
+      case "int8":
+        methodName = "readInt8";
+        break;
+      case "int16":
+        methodName = "readInt16";
+        offsetStep = 2;
+        break;
+      case "uint8":
+        methodName = "readUint8";
+        break;
+      case "uint16":
+        methodName = "readUint16";
+        offsetStep = 2;
+        break;
+      case "uint32":
+        methodName = "readUint32";
+        offsetStep = 4;
+        break;
+      case "int32":
+        methodName = "readInt32";
+        offsetStep = 4;
+        break;
+      default:
+        throw new Error("Invalid type " + type);
+    }
+    for (let i = 0; i < this.length; i += offsetStep) {
+      array.push((this as any)[methodName](i));
+    }
+    return array;
+  }
+
+  toBigintArray(unsigned: boolean = false): Array<bigint> {
+    const array = [];
+    const methodName = unsigned ? "readUint64" : "readInt64";
+    for (let i = 0; i < this.length; i += 8) {
+      array.push((this as any)[methodName](i));
+    }
+    return array;
   }
 }
