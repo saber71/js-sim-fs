@@ -1,3 +1,4 @@
+import { type BufferReader, BufferWriter } from "@heraclius/buffer-tools";
 import { Lazy } from "@heraclius/js-tools";
 import type { HardDisk } from "./HardDisk";
 
@@ -24,8 +25,8 @@ export namespace HardDiskController {
     clusterBytes: 1024 * 4,
   };
 
-  // 数据簇中记录终止位置的字节数
-  const clusterRecordBytes = new Lazy(() => {
+  // 数据簇中记录数据长度的字节数
+  const clusterLengthBytes = new Lazy(() => {
     if (option.clusterBytes <= 2 ** 8) return 1;
     if (option.clusterBytes <= 2 ** 16) return 2;
     if (option.clusterBytes <= 2 ** 32) return 4;
@@ -50,12 +51,16 @@ export namespace HardDiskController {
   }
 
   class DataMeta {
-    constructor(readonly buffer: Buffer) {}
+    readonly customData: BufferWriter;
+    readonly contentIndexes: BufferWriter;
 
-    getCustomData() {
-      const res = Buffer.alloc(option.metaCustomBytes);
-      this.buffer.copy(res, 0, 1, option.metaCustomBytes + 1);
-      return res;
+    constructor(readonly buffer: BufferReader) {
+      this.customData = buffer.slice(BufferWriter, 0, option.metaCustomBytes);
+      this.contentIndexes = buffer.slice(
+        BufferWriter,
+        option.metaCustomBytes,
+        option.metaBytes - option.metaCustomBytes,
+      );
     }
   }
 }

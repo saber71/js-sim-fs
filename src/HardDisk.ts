@@ -1,6 +1,6 @@
+import { BufferReader } from "@heraclius/buffer-tools";
 import fs from "node:fs";
 import fsPromise from "node:fs/promises";
-import { BufferReader } from "./BufferReader.ts";
 
 export namespace HardDisk {
   export abstract class Base {
