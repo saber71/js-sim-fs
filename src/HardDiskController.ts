@@ -1,5 +1,9 @@
-import { type BufferReader, BufferWriter } from "@heraclius/buffer-tools";
-import { Lazy } from "@heraclius/js-tools";
+import {
+  BufferData,
+  type BufferReader,
+  BufferWriter,
+} from "@heraclius/buffer-tools";
+import { lazy } from "@heraclius/js-tools";
 import type { HardDisk } from "./HardDisk";
 
 export namespace HardDiskController {
@@ -26,12 +30,16 @@ export namespace HardDiskController {
   };
 
   // 数据簇中记录数据长度的字节数
-  const clusterLengthBytes = new Lazy(() => {
+  const clusterLengthBytes = lazy(() => {
     if (option.clusterBytes <= 2 ** 8) return 1;
     if (option.clusterBytes <= 2 ** 16) return 2;
     if (option.clusterBytes <= 2 ** 32) return 4;
     return 8;
   });
+  // 数据簇中记录数据长度的数字类型
+  const clusterLengthDataType = lazy(() =>
+    BufferData.unsignedType(clusterLengthBytes.value),
+  );
 
   export abstract class Base {
     constructor(readonly hardDisk: HardDisk.Base) {}
@@ -60,6 +68,25 @@ export namespace HardDiskController {
         BufferWriter,
         option.metaCustomBytes,
         option.metaBytes - option.metaCustomBytes,
+      );
+    }
+  }
+
+  class Cluster {
+    constructor(readonly buffer: BufferReader) {}
+
+    get dataLength() {
+      return this.buffer.read(
+        clusterLengthDataType.value,
+        this.buffer.length - clusterLengthBytes.value,
+      );
+    }
+
+    getContent() {
+      return this.buffer.slice(
+        BufferWriter,
+        0,
+        (this.dataLength as number) - 1,
       );
     }
   }
